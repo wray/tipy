@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# kill off the current bot to upgrade
+pkill -f 'slackbot_tipy'
+
+pip install --upgrade slackbot_tipy
+
+export SLACK_BOT_TOKEN=${your_slack_bot_token}
+
+python -m slackbot_tipy.slackpi
