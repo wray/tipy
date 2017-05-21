@@ -29,6 +29,7 @@ def handle_command(command, channel):
     try:
         # get response from db (ti_python.py)
         # response = decipher_intent(prompt,response)
+        print('handle_command')
 
     except:
         response += str(sys.exec_info()[0])
