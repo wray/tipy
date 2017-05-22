@@ -35,7 +35,7 @@ def handle_command(command, channel):
     except:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        bot_response = str(exc_type) + ', ' + fname + ', ' + str(exc_tb.tb_lineno)
+        bot_response = str(exc_type) + ', ' + str(exc_obj) + ', ' + fname + ', ' + str(exc_tb.tb_lineno)
 
     print("["+bot_response+"]")
     
@@ -57,10 +57,7 @@ def parse_slack_output(slack_rtm_output):
     print(output_list)
     if output_list and len(output_list) > 0:
         for output in output_list:
-            if output and
-                'text' in output and
-                not 'bot_id' in output and
-                output['channel'] == CHANNEL:
+            if output and 'text' in output and not 'bot_id' in output and output['channel'] == CHANNEL:
                 # return text after the @ mention, whitespace removed
                 return output['text'], output['channel']
     return None, None
