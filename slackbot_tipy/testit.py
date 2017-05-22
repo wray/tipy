@@ -1,6 +1,6 @@
 import unittest
-import bot_id
-import slackpi
+import slackbot_tipy.bot_id
+import slackbot_tipy.slackpi
 
 class TestSlackBotFunctions(unittest.TestCase):
 
