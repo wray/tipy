@@ -3,7 +3,7 @@ from slackclient import SlackClient
 
 
 BOT_NAME = 'anow'
-CHANNEL_NAME = 'answersnow'
+CHANNEL_NAME = 'answersnow-test'
 
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 

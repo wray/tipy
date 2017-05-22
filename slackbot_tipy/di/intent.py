@@ -24,5 +24,5 @@ def decipher_intent(prompt_name, user_response):
             response = node['responses'][resp]
             if response['utterances'] in user_response:
                 return decipher_intent(response['next_prompt'],None)
-        return (prompt_name,'Invalid Response: ' + node['text'],False)
+        return (prompt_name,'-> ' + node['text'],False)
     
