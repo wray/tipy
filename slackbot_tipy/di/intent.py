@@ -5,7 +5,7 @@ from boto3.dynamodb.conditions import Key
 
 table = None
 
-def connect()
+def connect():
     try:
         dynamodb = boto3.resource('dynamodb')
         table = dynamodb.Table('answersnow_prompts')
