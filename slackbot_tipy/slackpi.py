@@ -33,7 +33,7 @@ def handle_command(command, channel):
         bot_response = prompt        
 
     except:
-        bot_response = str(sys.exc_info()[0])
+        bot_response = str(sys.exc_info()[1])
 
     print("["+bot_response+"]")
     
