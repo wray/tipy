@@ -2,15 +2,22 @@ import boto3
 from boto3.dynamodb.conditions import Key
 
 # connect to Dynamo
-try:
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('answersnow_prompts')
-except:
-    pass # Just to allow Travis build for now
+
+table = None
+
+def connect()
+    try:
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('answersnow_prompts')
+    except:
+        print('unable to connect to db')
 
 def decipher_intent(prompt_name, user_response):
     print(prompt_name,user_response)
 
+    if not table:
+        connect()
+    
     #node = monty_response[prompt_name]
     node = table.query(
         KeyConditionExpression=Key('prompt_now').eq(prompt_name)
