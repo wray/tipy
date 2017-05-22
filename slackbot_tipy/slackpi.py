@@ -35,7 +35,7 @@ def handle_command(command, channel):
     except:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        bot_response = str(exc_type, fname, exc_tb.tb_lineno)
+        bot_response = str(exc_type) + ', ' + fname + ', ' + str(exc_tb.tb_lineno)
 
     print("["+bot_response+"]")
     
