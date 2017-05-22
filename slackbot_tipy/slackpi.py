@@ -1,12 +1,14 @@
 import os
 import sys
 import time
+import boto3
+from boto3.dynamodb.conditions import Key
 from slackclient import SlackClient
 
 import bot_id
 
-
 # constants
+INIT_PROMPT = 'color'
 try:
     AT_BOT = "@" + bot_id.get_id()
     CHANNEL = bot_id.get_group_id()
@@ -14,45 +16,59 @@ try:
 except TypeError:
     pass
 
+# connect to Dynamo
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(bot_id.CHANNEL_NAME + '_prompts')
+
 # instantiate client
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
+prompts = {}
+
+def decipher_intent(prompt_name, user_response):
+    print(prompt_name,user_response)
+
+    #node = monty_response[prompt_name]
+    node = table.query(
+        KeyConditionExpression=Key('prompt_now').eq(prompt_name)
+        )['Items'][0]['prompt']
+    
+    # Essentially, return next prompt
+    if not user_response:
+        return prompt_name, node['text'], True if len(node['responses']) == 0 else False
+    else:
+        for resp in node['responses'].keys():
+            response = node['responses'][resp]
+            if response['utterances'] in user_response:
+                return decipher_intent(response['next_prompt'],None)
+        return (prompt_name,'Invalid Response: ' + node['text'],False)
+    
 
 def handle_command(command, channel):
     """
         Receives commands directed at the bot and determines if they
-        are valid commands. If so, then acts on the commands. If not,
+        are valid prompts. If so, then acts on the command/prompt. If not,
         returns back what it needs for clarification.
-        Need to determine an algorithm for student overloaded commands.
     """
 
     try:
-        # get response from db (ti_python.py)
-        # response = decipher_intent(prompt,response)
-        # print('handle_command')
-        response = 'empty'
+        prompt_name = INIT_PROMPT if not prompts.has_key(channel) else prompts[channel]
+        prompt_name, prompt, end_session = decipher_intent(prompt_name,command)
+        prompts[channel] = prompt_name if not end_session else prompts.pop(channel)
+        bot_response = prompt        
 
     except:
-        response += str(sys.exec_info()[0])
+        bot_response = str(sys.exec_info()[0])
 
-    print("["+response+"]")
+    print("["+bot_response+"]")
     
-    if len(response) == 0:
+    if len(bot_response) == 0:
         response = "Reset to top of tree."
 
-    # Split responses by %% and then add a delay in between
-    # First test with separate postings, better approach will be
-    # to use the chat.update command which will requires the ts back
-    # from the orginial post.
+    api_response = slack_client.api_call("chat.postMessage", channel=channel,
+                                    text=bot_response, as_user=True)
+    print(api_response)
 
-    responses = response.split('%%')
-
-    for response in responses:
-    
-        api_response = slack_client.api_call("chat.postMessage", channel=channel,
-                                text=response, as_user=True)
-        print(api_response)
-        time.sleep(0.5)
 
 def parse_slack_output(slack_rtm_output):
     """
@@ -64,11 +80,6 @@ def parse_slack_output(slack_rtm_output):
     print(output_list)
     if output_list and len(output_list) > 0:
         for output in output_list:
-            if output and 'text' in output and output['channel'] == CHANNEL:
-                print("Entering Mission Control")
-                #joe.slacklib.blink_green()
-                wray.slacklib.mission_control(bot_id,output)
-
             if output and 'text' in output and AT_BOT in output['text']:
                 # return text after the @ mention, whitespace removed
                 return output['text'].split(AT_BOT)[1].strip().lower(), \
