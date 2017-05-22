@@ -27,13 +27,13 @@ def handle_command(command, channel):
     """
 
     try:
-        prompt_name = INIT_PROMPT if not prompts.has_key(channel) else prompts[channel]
-        prompt_name, prompt, end_session = decipher_intent(prompt_name,command)
+        prompt_name = INIT_PROMPT if not prompts.get(channel) else prompts[channel]
+        prompt_name, prompt, end_session = intent.decipher_intent(prompt_name,command)
         prompts[channel] = prompt_name if not end_session else prompts.pop(channel)
         bot_response = prompt        
 
     except:
-        bot_response = str(sys.exec_info()[0])
+        bot_response = str(sys.exc_info()[0])
 
     print("["+bot_response+"]")
     
