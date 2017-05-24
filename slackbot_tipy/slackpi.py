@@ -6,7 +6,7 @@ from slackbot_tipy.di import intent
 from slackbot_tipy import bot_id
 
 # constants
-INIT_PROMPT = 'color'
+INIT_PROMPT = 'attention'
 try:
     AT_BOT = "@" + bot_id.get_id()
     CHANNEL = bot_id.get_group_id()
