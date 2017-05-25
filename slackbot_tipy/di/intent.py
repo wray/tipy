@@ -22,7 +22,8 @@ def decipher_intent(prompt_name, user_response):
     else:
         for resp in node['responses'].keys():
             response = node['responses'][resp]
-            if response['utterances'] in user_response:
-                return decipher_intent(response['next_prompt'],None)
+            for word in response['utterances'].split(","):
+                if response['utterances'] in user_response.lower():
+                    return decipher_intent(response['next_prompt'],None)
         return (prompt_name,'-> ' + node['text'],False)
     
