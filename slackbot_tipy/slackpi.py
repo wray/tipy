@@ -29,7 +29,7 @@ def handle_command(command, channel):
     try:
         prompt_name = INIT_PROMPT if not prompts.get(channel) else prompts[channel]
         prompt_name, prompt, end_session = intent.decipher_intent(prompt_name,command)
-        prompts[channel] = prompt_name if not end_session else prompts.pop(channel)
+        prompts[channel] = prompt_name if not end_session else INIT_PROMPT
         bot_response = prompt        
 
     except:
